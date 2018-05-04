@@ -90,8 +90,10 @@ public class UserController {
 
 
 
+
     @RequestMapping(value = "/version" ,method = RequestMethod.GET)
     public UpdateEntity getUpdateEntity(){
+
         UpdateEntity updateEntity = new UpdateEntity();
         updateEntity.setApkDescription("得发商城app新版本更新");
         updateEntity.setVersionCode(3);

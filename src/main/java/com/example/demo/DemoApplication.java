@@ -1,24 +1,23 @@
 package com.example.demo;
 
-import com.example.demo.redis.RedisReceiver;
+
+import com.example.demo.controller.Quote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.listener.PatternTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.concurrent.CountDownLatch;
 
 @SpringBootApplication
+@EnableScheduling
 public class DemoApplication {
 
-	//private static final Logger LOGGER = LoggerFactory.getLogger(DemoApplication.class);
+	private static final Logger log = LoggerFactory.getLogger(DemoApplication.class);
 
 	public static void main(String[] args) throws InterruptedException {
 		SpringApplication.run(DemoApplication.class, args);
@@ -80,5 +79,22 @@ public class DemoApplication {
 //	}
 
 
+	@Bean
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
+	}
+
+
+	@Bean
+	public CommandLineRunner run (RestTemplate restTemplate)throws Exception{
+
+
+		return rags -> {
+			Quote quote = restTemplate.getForObject(
+					"http://gturnquist-quoters.cfapps.io/api/random", Quote.class);
+			log.info(quote.toString());
+		};
+
+	}
 
 }
